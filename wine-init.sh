@@ -1,8 +1,5 @@
 #!/bin/sh
-# Prepare environment:
-# - Disable menu updates
-# - Disable Mono
-# - Disable Gecko
+
 set -e
 
 umask 0

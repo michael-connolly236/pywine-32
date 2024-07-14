@@ -1,12 +1,12 @@
 FROM tobix/wine:devel
-MAINTAINER Tobias Gruetzmacher "tobias-docker@23.gs"
+#Formerly MAINTAINER Tobias Gruetzmacher "tobias-docker@23.gs"
 
 ENV WINEDEBUG -all
 ENV WINEPREFIX /opt/wineprefix
 
 COPY wine-init.sh SHA256SUMS.txt keys.gpg /tmp/helper/
 COPY mkuserwineprefix entrypoint.sh /opt/
-
+RUN chmod 777 /tmp/helper/wine-init.sh
 # Prepare environment
 RUN xvfb-run sh /tmp/helper/wine-init.sh
 
@@ -17,13 +17,13 @@ ARG UPX_VERSION=4.2.4
 
 RUN umask 0 && cd /tmp/helper && \
   curl -LOOO \
-    https://www.python.org/ftp/python/${PYTHON_VERSION}/python-${PYTHON_VERSION}-amd64.exe{,.asc} \
+    https://www.python.org/ftp/python/${PYTHON_VERSION}/python-${PYTHON_VERSION}.exe{,.asc} \
     https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-win64.zip \
   && \
-  gpgv --keyring ./keys.gpg python-${PYTHON_VERSION}-amd64.exe.asc python-${PYTHON_VERSION}-amd64.exe && \
+  gpgv --keyring ./keys.gpg python-${PYTHON_VERSION}.exe.asc python-${PYTHON_VERSION}.exe && \
   sha256sum -c SHA256SUMS.txt && \
   xvfb-run sh -c "\
-    wine python-${PYTHON_VERSION}-amd64.exe /quiet TargetDir=C:\\Python \
+    wine python-${PYTHON_VERSION}.exe /quiet TargetDir=C:\\Python \
       Include_doc=0 InstallAllUsers=1 PrependPath=1; \
     wineserver -w" && \
   unzip upx*.zip && \
